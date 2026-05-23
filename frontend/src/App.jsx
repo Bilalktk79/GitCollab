@@ -2,7 +2,7 @@ import { BrowserRouter } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 
 import { AuthProvider } from "./context/AuthContext";
-import { RepoProvider } from "./context/repoContext";
+import { RepoProvider } from "./context/RepoContext";
 
 import AppRoutes from "./routes/AppRoutes";
 
