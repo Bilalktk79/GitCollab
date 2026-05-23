@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useRepo } from "../context/repoContext";
+import { useRepo } from "../context/RepoContext";
 import { uploadFile } from "../services/repoService";
 
 import "../styles/pages.css";
