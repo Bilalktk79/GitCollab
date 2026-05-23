@@ -58,3 +58,128 @@
 .login-card button:hover {
   background: #f97316;
 }
+
+/* =========================
+   GLOBAL RESPONSIVE FIXES
+========================= */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  min-height: 100%;
+  overflow-x: hidden;
+}
+
+img,
+svg,
+video {
+  max-width: 100%;
+  height: auto;
+}
+
+button,
+input,
+textarea,
+select {
+  max-width: 100%;
+}
+
+.page {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.container,
+.page-container,
+.dashboard-container,
+.admin-container,
+.auth-card,
+.repo-card,
+.card {
+  max-width: 100%;
+}
+
+/* Tablets */
+@media (max-width: 1024px) {
+  .page {
+    padding: 35px 5%;
+  }
+
+  .page-title {
+    font-size: 36px;
+  }
+
+  .repo-grid,
+  .dashboard-grid,
+  .admin-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 20px;
+  }
+}
+
+/* Phones */
+@media (max-width: 768px) {
+  .page {
+    padding: 28px 18px;
+  }
+
+  .page-title {
+    font-size: 30px;
+    text-align: center;
+  }
+
+  .repo-grid,
+  .dashboard-grid,
+  .admin-grid,
+  .cards-grid {
+    grid-template-columns: 1fr !important;
+    gap: 18px;
+  }
+
+  .auth-card,
+  .form-card,
+  .repo-card,
+  .admin-card {
+    width: 100%;
+    padding: 20px;
+  }
+
+  input,
+  textarea,
+  select,
+  button {
+    width: 100%;
+  }
+
+  table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+}
+
+/* Small phones */
+@media (max-width: 480px) {
+  .page {
+    padding: 22px 14px;
+  }
+
+  .page-title {
+    font-size: 25px;
+  }
+
+  .primary-btn,
+  .secondary-btn,
+  .danger-btn,
+  .admin-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}

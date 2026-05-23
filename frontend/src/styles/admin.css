@@ -544,3 +544,43 @@
   font-size: 13px;
   font-weight: 700;
 }
+
+/* =========================
+   RESPONSIVE ADMIN PAGES
+========================= */
+
+@media (max-width: 900px) {
+  .admin-card,
+  .admin-panel,
+  .admin-section {
+    padding: 20px;
+  }
+
+  .admin-header,
+  .admin-actions,
+  .admin-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .admin-header button,
+  .admin-actions button,
+  .admin-toolbar button,
+  .admin-search {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-table-wrapper,
+  .table-wrapper {
+    overflow-x: auto;
+    width: 100%;
+  }
+
+  .admin-table,
+  table {
+    min-width: 700px;
+  }
+}

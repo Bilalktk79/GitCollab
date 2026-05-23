@@ -252,3 +252,74 @@
     justify-content: center;
   }
 }
+
+/* =========================
+   RESPONSIVE NAVBAR
+========================= */
+
+@media (max-width: 1024px) {
+  .navbar {
+    flex-wrap: wrap;
+    padding: 16px 5%;
+    gap: 14px;
+  }
+
+  .nav-logo,
+  .logo {
+    font-size: 22px;
+  }
+
+  .nav-links {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 14px;
+    width: 100%;
+  }
+
+  .nav-actions {
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+    gap: 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    align-items: center;
+    padding: 14px 16px;
+  }
+
+  .nav-logo,
+  .logo {
+    text-align: center;
+    font-size: 20px;
+  }
+
+  .nav-links {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    gap: 10px;
+  }
+
+  .nav-links a,
+  .nav-links .nav-link {
+    width: 100%;
+    text-align: center;
+    padding: 10px;
+  }
+
+  .nav-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .nav-actions button,
+  .nav-actions a {
+    width: 100%;
+    text-align: center;
+  }
+}
