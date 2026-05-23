@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { useRepo } from "../context/repoContext";
+import { useRepo } from "../context/RepoContext";
 import {
   getStarredRepos,
   deleteRepo,
