@@ -1,0 +1,514 @@
+.commits-page {
+  min-height: calc(100vh - 85px);
+  background: #0d1117;
+  color: #f0f6fc;
+  padding: 45px 6%;
+}
+
+.commits-page-header {
+  margin-bottom: 35px;
+}
+
+.commits-page-header h1 {
+  font-size: 42px;
+  font-weight: 800;
+  margin-bottom: 10px;
+  color: #f0f6fc;
+}
+
+.commits-page-header h1 span {
+  color: #238636;
+}
+
+.commits-page-header p {
+  color: #8b949e;
+  max-width: 850px;
+  line-height: 1.7;
+  font-size: 16px;
+}
+
+.commit-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+  margin-bottom: 28px;
+}
+
+.stat-card {
+  background: linear-gradient(145deg, #161b22, #0d1117);
+  border: 1px solid #30363d;
+  border-radius: 18px;
+  padding: 22px;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25);
+}
+
+.stat-card h3 {
+  font-size: 32px;
+  color: #3fb950;
+  margin-bottom: 6px;
+}
+
+.stat-card p {
+  color: #8b949e;
+  font-size: 14px;
+}
+
+.commit-filter-bar {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 28px;
+}
+
+.commit-filter-bar button {
+  background: #161b22;
+  border: 1px solid #30363d;
+  color: #c9d1d9;
+  padding: 11px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 700;
+  transition: 0.3s ease;
+}
+
+.commit-filter-bar button:hover,
+.commit-filter-bar button.active {
+  background: rgba(35, 134, 54, 0.15);
+  border-color: #238636;
+  color: #3fb950;
+}
+
+.commits-list {
+  display: grid;
+  gap: 24px;
+}
+
+.commit-card {
+  background: linear-gradient(145deg, #161b22, #0d1117);
+  border: 1px solid #30363d;
+  border-radius: 22px;
+  padding: 26px;
+  box-shadow: 0 16px 35px rgba(0, 0, 0, 0.28);
+  transition: 0.3s ease;
+}
+
+.commit-card:hover {
+  border-color: #238636;
+  transform: translateY(-3px);
+}
+
+.commit-card-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.commit-card-header h2 {
+  color: #f0f6fc;
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.commit-card-header p {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #8b949e;
+}
+
+.commit-card-header strong {
+  color: #c9d1d9;
+}
+
+.commit-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 13px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.commit-status.pending-review {
+  color: #d29922;
+  background: rgba(210, 153, 34, 0.12);
+  border: 1px solid rgba(210, 153, 34, 0.45);
+}
+
+.commit-status.approved {
+  color: #3fb950;
+  background: rgba(63, 185, 80, 0.12);
+  border: 1px solid rgba(63, 185, 80, 0.45);
+}
+
+.commit-status.changes-requested {
+  color: #f85149;
+  background: rgba(248, 81, 73, 0.12);
+  border: 1px solid rgba(248, 81, 73, 0.45);
+}
+
+.commit-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.commit-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: #0d1117;
+  border: 1px solid #30363d;
+  color: #c9d1d9;
+  padding: 9px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+}
+
+.commit-extra-info {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.commit-extra-info span {
+  background: rgba(47, 129, 247, 0.12);
+  border: 1px solid rgba(47, 129, 247, 0.35);
+  color: #58a6ff;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.changed-files {
+  margin-top: 18px;
+}
+
+.changed-files h4 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #f0f6fc;
+  margin-bottom: 12px;
+}
+
+.file-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.file-tags span {
+  background: #0d1117;
+  border: 1px solid #30363d;
+  color: #c9d1d9;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+}
+
+.commit-feedback {
+  background: #0d1117;
+  border: 1px solid #30363d;
+  border-radius: 16px;
+  padding: 16px;
+  margin-top: 18px;
+}
+
+.commit-feedback h4 {
+  color: #f0f6fc;
+  margin-bottom: 8px;
+}
+
+.commit-feedback p {
+  color: #8b949e;
+  line-height: 1.6;
+}
+
+.commit-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.commit-actions button,
+.commit-actions a {
+  border: none;
+  outline: none;
+  padding: 11px 15px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  transition: 0.3s ease;
+}
+
+.approve-btn {
+  background: #238636;
+  color: white;
+}
+
+.request-btn {
+  background: #da3633;
+  color: white;
+}
+
+.chat-btn {
+  background: #1f6feb;
+  color: white;
+}
+
+.details-btn {
+  background: #21262d;
+  color: #c9d1d9;
+  border: 1px solid #30363d !important;
+}
+
+.commit-actions button:hover,
+.commit-actions a:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.35);
+}
+
+.review-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(1, 4, 9, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  padding: 20px;
+}
+
+.review-modal {
+  width: 100%;
+  max-width: 560px;
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 22px;
+  padding: 26px;
+  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.5);
+}
+
+.review-modal h2 {
+  color: #f0f6fc;
+  margin-bottom: 18px;
+}
+
+.review-commit-info {
+  background: #0d1117;
+  border: 1px solid #30363d;
+  border-radius: 16px;
+  padding: 14px;
+  margin-bottom: 16px;
+}
+
+.review-commit-info p {
+  color: #8b949e;
+  margin-bottom: 8px;
+}
+
+.review-commit-info strong {
+  color: #c9d1d9;
+}
+
+.review-modal textarea {
+  width: 100%;
+  min-height: 140px;
+  resize: vertical;
+  background: #0d1117;
+  border: 1px solid #30363d;
+  color: #f0f6fc;
+  border-radius: 14px;
+  padding: 14px;
+  outline: none;
+  margin-bottom: 16px;
+}
+
+.review-modal textarea:focus {
+  border-color: #238636;
+  box-shadow: 0 0 0 3px rgba(35, 134, 54, 0.16);
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.cancel-btn {
+  background: #21262d;
+  color: #c9d1d9;
+  border: 1px solid #30363d;
+  padding: 11px 15px;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.submit-review-btn {
+  background: #238636;
+  color: white;
+  border: none;
+  padding: 11px 15px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.no-commits {
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 18px;
+  padding: 35px;
+  text-align: center;
+}
+
+.no-commits h3 {
+  color: #f0f6fc;
+  margin-bottom: 8px;
+}
+
+.no-commits p {
+  color: #8b949e;
+}
+
+/* Commit Details Page */
+
+.back-btn {
+  background: #161b22;
+  border: 1px solid #30363d;
+  color: #c9d1d9;
+  padding: 10px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 18px;
+  transition: 0.3s ease;
+}
+
+.back-btn:hover {
+  border-color: #238636;
+  color: #3fb950;
+}
+
+.commit-details-wrapper {
+  margin-top: 28px;
+}
+
+.commit-details-card {
+  background: linear-gradient(145deg, #161b22, #0d1117);
+  border: 1px solid #30363d;
+  border-radius: 22px;
+  padding: 28px;
+  box-shadow: 0 16px 35px rgba(0, 0, 0, 0.28);
+}
+
+.commit-summary-box {
+  background: #0d1117;
+  border: 1px solid #30363d;
+  border-radius: 16px;
+  padding: 18px;
+  margin: 22px 0;
+}
+
+.commit-summary-box h4 {
+  color: #f0f6fc;
+  margin-bottom: 10px;
+}
+
+.commit-summary-box p {
+  color: #8b949e;
+  line-height: 1.6;
+}
+
+.commit-file-list {
+  display: grid;
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.commit-file-card {
+  display: flex;
+  gap: 14px;
+  background: #0d1117;
+  border: 1px solid #30363d;
+  border-radius: 16px;
+  padding: 16px;
+}
+
+.file-icon {
+  width: 42px;
+  height: 42px;
+  min-width: 42px;
+  background: rgba(35, 134, 54, 0.16);
+  color: #3fb950;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.commit-file-card h3 {
+  color: #f0f6fc;
+  margin-bottom: 4px;
+}
+
+.commit-file-card span {
+  display: inline-block;
+  color: #58a6ff;
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+
+.commit-file-card p {
+  color: #8b949e;
+  line-height: 1.5;
+}
+
+@media (max-width: 900px) {
+  .commit-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .commit-card-header {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 600px) {
+  .commits-page {
+    padding: 30px 4%;
+  }
+
+  .commits-page-header h1 {
+    font-size: 32px;
+  }
+
+  .commit-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .commit-actions {
+    flex-direction: column;
+  }
+
+  .commit-actions button,
+  .commit-actions a {
+    justify-content: center;
+    width: 100%;
+  }
+}

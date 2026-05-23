@@ -1,0 +1,254 @@
+.navbar {
+  height: 85px;
+  background: #0d1117;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8%;
+  border-bottom: 1px solid #30363d;
+  gap: 22px;
+}
+
+/* LOGO */
+
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.logo-icon {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  border: 3px solid #2f81f7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #2f81f7;
+  font-size: 28px;
+  background: #161b22;
+  transition: 0.3s ease;
+}
+
+.logo-text {
+  color: #58a6ff;
+  font-size: 30px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.nav-logo:hover .logo-icon {
+  color: #2ea043;
+  border-color: #2ea043;
+  box-shadow: 0 0 18px rgba(46, 160, 67, 0.45);
+}
+
+/* NAV LINKS */
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.nav-links a {
+  color: #f0f6fc;
+  text-decoration: none;
+  font-size: 17px;
+  font-weight: 700;
+  transition: 0.3s ease;
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* HOVER GREEN */
+
+.nav-links a:hover {
+  color: #2ea043;
+}
+
+/* ACTIVE GREEN */
+
+.nav-links a.active {
+  color: #2ea043;
+}
+
+/* ANIMATED UNDERLINE */
+
+.nav-links a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -7px;
+  width: 0%;
+  height: 2px;
+  background: #2ea043;
+  transition: 0.3s ease;
+}
+
+.nav-links a:hover::after,
+.nav-links a.active::after {
+  width: 100%;
+}
+
+.nav-link-icon {
+  font-size: 14px;
+}
+
+/* LOGIN / LOGOUT BUTTON */
+
+.login-btn {
+  padding: 11px 22px;
+  border-radius: 8px;
+  background: #238636;
+  color: white;
+  text-decoration: none;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: 0.3s ease;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.login-btn:hover {
+  background: #2ea043;
+  transform: translateY(-2px);
+  box-shadow: 0 0 18px rgba(46, 160, 67, 0.45);
+}
+
+/* AUTH BUTTONS WHEN USER IS NOT LOGGED IN */
+
+.nav-auth-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.client-access-nav {
+  color: #3fb950;
+  border: 1px solid rgba(35, 134, 54, 0.45);
+  background: rgba(35, 134, 54, 0.12);
+  padding: 10px 14px;
+  border-radius: 12px;
+  text-decoration: none;
+  font-weight: 700;
+  transition: 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  white-space: nowrap;
+}
+
+.client-access-nav:hover {
+  background: rgba(35, 134, 54, 0.22);
+  transform: translateY(-2px);
+  box-shadow: 0 0 16px rgba(46, 160, 67, 0.25);
+}
+
+/* USER BADGE WHEN LOGGED IN */
+
+.nav-user-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.nav-user-badge {
+  background: rgba(35, 134, 54, 0.14);
+  border: 1px solid rgba(35, 134, 54, 0.45);
+  color: #3fb950;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 1200px) {
+  .navbar {
+    padding: 0 4%;
+  }
+
+  .nav-links {
+    gap: 16px;
+  }
+
+  .nav-links a {
+    font-size: 15px;
+  }
+
+  .logo-text {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 950px) {
+  .navbar {
+    height: auto;
+    min-height: 85px;
+    padding: 18px 4%;
+    flex-wrap: wrap;
+  }
+
+  .nav-logo {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .nav-links {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .nav-auth-actions,
+  .nav-user-actions {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 520px) {
+  .logo-text {
+    font-size: 20px;
+  }
+
+  .logo-icon {
+    width: 46px;
+    height: 46px;
+    font-size: 24px;
+  }
+
+  .nav-links {
+    gap: 12px;
+  }
+
+  .nav-links a {
+    font-size: 14px;
+  }
+
+  .nav-auth-actions,
+  .nav-user-actions {
+    flex-direction: column;
+  }
+
+  .login-btn,
+  .client-access-nav {
+    width: 100%;
+    justify-content: center;
+  }
+}

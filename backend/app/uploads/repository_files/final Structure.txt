@@ -1,0 +1,101 @@
+project/
+│
+├── frontend/
+│   │
+│   ├── public/
+│   │
+│   ├── src/
+│   │   │
+│   │   ├── assets/
+│   │   │
+│   │   ├── components/
+│   │   │   ├── Navbar.jsx
+│   │   │   ├── Sidebar.jsx
+│   │   │   ├── RepoCard.jsx
+│   │   │   ├── FileCard.jsx
+│   │   │   ├── UploadModal.jsx
+│   │   │   └── SearchBar.jsx
+│   │   │
+│   │   ├── pages/
+│   │   │   ├── Login.jsx
+│   │   │   ├── Signup.jsx
+│   │   │   ├── Dashboard.jsx
+│   │   │   ├── CreateRepo.jsx
+│   │   │   ├── RepositoryDetails.jsx
+│   │   │   └── Profile.jsx
+│   │   │
+│   │   ├── services/
+│   │   │   ├── api.js
+│   │   │   └── auth.js
+│   │   │
+│   │   ├── routes/
+│   │   │   └── AppRoutes.jsx
+│   │   │
+│   │   ├── context/
+│   │   │   └── AuthContext.jsx
+│   │   │
+│   │   ├── styles/
+│   │   │
+│   │   ├── App.jsx
+│   │   └── main.jsx
+│   │
+│   ├── cypress/
+│   │   │
+│   │   ├── e2e/
+│   │   │   ├── login.cy.js
+│   │   │   ├── signup.cy.js
+│   │   │   ├── createRepo.cy.js
+│   │   │   ├── uploadFile.cy.js
+│   │   │   └── searchRepo.cy.js
+│   │   │
+│   │   ├── fixtures/
+│   │   │   └── user.json
+│   │   │
+│   │   └── support/
+│   │       ├── commands.js
+│   │       └── e2e.js
+│   │
+│   ├── cypress.config.js
+│   │
+│   ├── package.json
+│   └── vite.config.js
+│
+│
+├── backend/
+│   │
+│   ├── app/
+│   │   │
+│   │   ├── main.py
+│   │   │
+│   │   ├── database/
+│   │   │   └── db.py
+│   │   │
+│   │   ├── models/
+│   │   │   ├── user_model.py
+│   │   │   ├── repo_model.py
+│   │   │   └── file_model.py
+│   │   │
+│   │   ├── routes/
+│   │   │   ├── auth_routes.py
+│   │   │   ├── repo_routes.py
+│   │   │   └── file_routes.py
+│   │   │
+│   │   ├── controllers/
+│   │   │   ├── auth_controller.py
+│   │   │   ├── repo_controller.py
+│   │   │   └── file_controller.py
+│   │   │
+│   │   ├── middleware/
+│   │   │   └── auth_middleware.py
+│   │   │
+│   │   ├── utils/
+│   │   │   ├── jwt_handler.py
+│   │   │   └── helpers.py
+│   │   │
+│   │   └── uploads/
+│   │       └── repository_files/
+│   │
+│   ├── requirements.txt
+│   └── .env
+│
+└── README.md

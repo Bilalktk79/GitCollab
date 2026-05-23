@@ -1,0 +1,21 @@
+# Backend secrets
+backend/.env
+backend/venv/
+backend/__pycache__/
+backend/**/*.pyc
+backend/.pytest_cache/
+
+# Frontend secrets/build
+frontend/.env
+frontend/.env.local
+frontend/node_modules/
+frontend/dist/
+
+# Cypress sensitive/results
+frontend/cypress.env.json
+frontend/cypress/screenshots/
+frontend/cypress/videos/
+
+# System
+.DS_Store
+Thumbs.db
