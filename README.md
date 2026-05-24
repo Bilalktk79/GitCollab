@@ -1,9 +1,3 @@
-Haan boss. Neeche **more enhanced, recruiter-focused, professional README.md** hai — ismein tumhare project ki almost **har feature, architecture, workflow, modules, APIs, database collections, use cases, security, testing, roadmap, learning outcomes** sab explain kar diya hai.
-
-GitHub par repo currently public hai, structure mein `backend` aur `frontend` folders hain, repo description React + FastAPI + MongoDB based GitHub repository collaboration system batati hai, aur repo languages JavaScript, Python, CSS, HTML show ho rahi hain. ([GitHub][1])
-
-Isko direct `README.md` mein paste kar do.
-
 ````md
 # GitCollab — GitHub Repository Collaboration, Commit Review & Client Communication Platform
 
