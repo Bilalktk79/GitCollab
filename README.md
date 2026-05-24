@@ -1,4 +1,3 @@
-````md
 # GitCollab — GitHub Repository Collaboration, Commit Review & Client Communication Platform
 
 <div align="center">
@@ -133,7 +132,6 @@ GitCollab is divided into the following major modules:
 7. Developer Help Room Module
 8. Admin Management Module
 9. Notification and Activity Logging Module
-````
 
 ---
 
