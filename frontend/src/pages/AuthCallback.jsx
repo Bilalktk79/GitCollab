@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
 import { useAuth } from "../context/AuthContext";
@@ -72,12 +72,16 @@ const getUsernameFromPayload = (payload, fallbackUsername = null) => {
 const AuthCallback = () => {
   const navigate = useNavigate();
   const location = useLocation();
-
   const { login } = useAuth();
+
+  const hasProcessed = useRef(false);
 
   const [message, setMessage] = useState("Completing GitHub login...");
 
   useEffect(() => {
+    if (hasProcessed.current) return;
+    hasProcessed.current = true;
+
     const params = new URLSearchParams(location.search);
 
     const token = params.get("token");
@@ -91,7 +95,7 @@ const AuthCallback = () => {
 
       setTimeout(() => {
         navigate("/login", { replace: true });
-      }, 1200);
+      }, 1000);
     };
 
     if (error) {
@@ -121,13 +125,11 @@ const AuthCallback = () => {
     setMessage("GitHub login successful. Redirecting...");
 
     setTimeout(() => {
-      if (finalRole === "admin") {
-        navigate("/admin", { replace: true });
-      } else {
-        navigate("/dashboard", { replace: true });
-      }
-    }, 800);
-  }, [location.search, login, navigate]);
+      navigate(finalRole === "admin" ? "/admin" : "/dashboard", {
+        replace: true,
+      });
+    }, 700);
+  }, [location.search, navigate]);
 
   return (
     <div className="page">
