@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from jose import jwt, JWTError
+from dotenv import load_dotenv
 import os
 
 from app.models.client_model import ClientAccessCreate, ClientAccessLogin
@@ -14,6 +15,8 @@ from app.controllers.client_controller import (
     activate_client_access_controller,
 )
 
+
+load_dotenv()
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM", "HS256")
@@ -29,10 +32,20 @@ router = APIRouter(
 def get_current_user(
     credentials: HTTPAuthorizationCredentials = Depends(security)
 ):
+    if not SECRET_KEY:
+        raise HTTPException(
+            status_code=500,
+            detail="Server auth configuration error: SECRET_KEY is missing."
+        )
+
     token = credentials.credentials
 
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        payload = jwt.decode(
+            token,
+            SECRET_KEY,
+            algorithms=[ALGORITHM]
+        )
 
         user_id = payload.get("user_id")
         username = payload.get("username")
@@ -41,7 +54,7 @@ def get_current_user(
         if not user_id or not username:
             raise HTTPException(
                 status_code=401,
-                detail="Invalid authentication token."
+                detail="Invalid authentication token payload."
             )
 
         return {
@@ -52,10 +65,10 @@ def get_current_user(
             "auth_provider": payload.get("auth_provider"),
         }
 
-    except JWTError:
+    except JWTError as e:
         raise HTTPException(
             status_code=401,
-            detail="Invalid or expired authentication token."
+            detail=f"Invalid or expired authentication token: {str(e)}"
         )
 
 
