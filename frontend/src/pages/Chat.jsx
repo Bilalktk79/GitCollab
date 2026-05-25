@@ -34,33 +34,44 @@ const Chat = () => {
     Agar role developer hai to developerId first.
     Warna old localStorage values mix ho jati hain aur sender_id wrong save hoti hai.
   */
-  const storedRole =
-    localStorage.getItem("userRole") ||
-    localStorage.getItem("role") ||
-    "developer";
+const decodeJwtPayload = (token) => {
+  try {
+    if (!token) return null;
 
-  const currentUser = {
-    id:
-      storedRole === "client"
-        ? localStorage.getItem("clientId") ||
-          localStorage.getItem("userId") ||
-          ""
-        : localStorage.getItem("developerId") ||
-          localStorage.getItem("userId") ||
-          "101",
+    const payload = token.split(".")[1];
+    if (!payload) return null;
 
-    name:
-      storedRole === "client"
-        ? localStorage.getItem("clientName") ||
-          localStorage.getItem("username") ||
-          "Client"
-        : localStorage.getItem("developerName") ||
-          localStorage.getItem("username") ||
-          "Developer",
+    return JSON.parse(atob(payload));
+  } catch (error) {
+    console.error("Failed to decode token:", error);
+    return null;
+  }
+};
 
-    role: storedRole,
-  };
+const appToken = localStorage.getItem("token");
+const decodedToken = decodeJwtPayload(appToken);
 
+const storedRole =
+  decodedToken?.role ||
+  localStorage.getItem("user_role") ||
+  localStorage.getItem("role") ||
+  "developer";
+
+const currentUser = {
+  id:
+    decodedToken?.user_id ||
+    localStorage.getItem("user_id") ||
+    localStorage.getItem("clientId") ||
+    "",
+
+  name:
+    decodedToken?.username ||
+    localStorage.getItem("username") ||
+    localStorage.getItem("clientName") ||
+    "User",
+
+  role: storedRole,
+};
   const currentUserRole = currentUser.role;
 
   const [selectedFilter, setSelectedFilter] = useState("all");
@@ -106,6 +117,7 @@ const Chat = () => {
       priority: conversation.priority || "medium",
       reviewStatus: conversation.review_status || "Pending Review",
       updatedAt: formatDate(conversation.updated_at),
+      raw: conversation,
     };
   };
 
@@ -137,8 +149,18 @@ const Chat = () => {
       const data = await getUserConversations(currentUser.id);
 
       const normalizedData = Array.isArray(data)
-        ? data.map(normalizeConversation)
-        : [];
+  ? data
+      .map(normalizeConversation)
+      .filter((conversation) => {
+        const currentId = String(currentUser.id);
+
+        return (
+          String(conversation.participantId) === currentId ||
+          conversation.raw?.participants?.map(String).includes(currentId) ||
+          currentUser.role === "admin"
+        );
+      })
+  : [];
 
       setConversations(normalizedData);
 

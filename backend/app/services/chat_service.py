@@ -13,6 +13,17 @@ def normalize_text(value):
     return str(value).strip()
 
 
+def normalize_participants(*values):
+    participants = []
+
+    for value in values:
+        normalized = normalize_text(value)
+        if normalized and normalized not in participants:
+            participants.append(normalized)
+
+    return participants
+
+
 def serialize_chat_message(message):
     return {
         "id": str(message["_id"]),
@@ -27,6 +38,7 @@ def serialize_chat_message(message):
         "message": message.get("message") or "",
         "is_read": message.get("is_read", False),
         "created_at": message.get("created_at"),
+        "participants": [str(item) for item in message.get("participants", [])],
     }
 
 
@@ -47,6 +59,7 @@ def serialize_conversation(item):
         "status": item.get("status", "online"),
         "priority": item.get("priority", "medium"),
         "review_status": item.get("review_status", "Pending Review"),
+        "participants": [str(item) for item in item.get("participants", [])],
     }
 
 
@@ -55,6 +68,8 @@ def send_chat_message(data):
     receiver_id = normalize_text(data.receiver_id)
     repo_id = normalize_text(data.repo_id)
     commit_id = normalize_text(data.commit_id)
+
+    participants = normalize_participants(sender_id, receiver_id)
 
     chat_message = {
         "sender_id": sender_id,
@@ -68,18 +83,20 @@ def send_chat_message(data):
         "message": data.message,
         "is_read": False,
         "created_at": datetime.utcnow(),
+        "participants": participants,
     }
 
     result = chat_collection.insert_one(chat_message)
     chat_message["_id"] = result.inserted_id
 
-    create_notification({
-        "user_id": receiver_id,
-        "title": "New Chat Message",
-        "message": f"{data.sender_name} sent you a message.",
-        "type": "chat",
-        "related_id": str(result.inserted_id),
-    })
+    if receiver_id:
+        create_notification({
+            "user_id": receiver_id,
+            "title": "New Chat Message",
+            "message": f"{data.sender_name} sent you a message.",
+            "type": "chat",
+            "related_id": str(result.inserted_id),
+        })
 
     return serialize_chat_message(chat_message)
 
@@ -96,27 +113,32 @@ def get_conversation(
     commit_id = normalize_text(commit_id)
 
     query = {
-        "$or": [
-            {"sender_id": user1_id, "receiver_id": user2_id},
-            {"sender_id": user2_id, "receiver_id": user1_id},
+        "$and": [
+            {
+                "$or": [
+                    {"participants": {"$all": [user1_id, user2_id]}},
+
+                    # Old messages fallback, because previous records may not have participants field.
+                    {"sender_id": user1_id, "receiver_id": user2_id},
+                    {"sender_id": user2_id, "receiver_id": user1_id},
+                ]
+            }
         ]
     }
 
     if repo_id:
-        query["repo_id"] = repo_id
+        query["$and"].append({"repo_id": repo_id})
 
     if commit_id:
-        query["commit_id"] = commit_id
+        query["$and"].append({"commit_id": commit_id})
     else:
-        query["$and"] = [
-            {
-                "$or": [
-                    {"commit_id": ""},
-                    {"commit_id": None},
-                    {"commit_id": {"$exists": False}},
-                ]
-            }
-        ]
+        query["$and"].append({
+            "$or": [
+                {"commit_id": ""},
+                {"commit_id": None},
+                {"commit_id": {"$exists": False}},
+            ]
+        })
 
     messages = chat_collection.find(query).sort("created_at", 1)
 
@@ -124,6 +146,12 @@ def get_conversation(
 
 
 def get_commit_messages(commit_id: str):
+    """
+    Warning:
+    This endpoint returns messages by commit_id only.
+    Better practice: use get_conversation() with current user id + participant id.
+    Keeping this for old app compatibility.
+    """
     commit_id = normalize_text(commit_id)
 
     messages = chat_collection.find(
@@ -136,8 +164,14 @@ def get_commit_messages(commit_id: str):
 def get_user_conversations(user_id: str):
     user_id = normalize_text(user_id)
 
+    if not user_id:
+        return []
+
     query = {
         "$or": [
+            {"participants": user_id},
+
+            # Old messages fallback, because previous records may not have participants field.
             {"sender_id": user_id},
             {"receiver_id": user_id},
         ]
@@ -151,12 +185,24 @@ def get_user_conversations(user_id: str):
         sender_id = normalize_text(message.get("sender_id"))
         receiver_id = normalize_text(message.get("receiver_id"))
 
+        # Extra safety: ignore any message where current user is not actually involved.
+        participants = [str(item) for item in message.get("participants", [])]
+
+        is_current_user_involved = (
+            user_id in participants
+            or sender_id == user_id
+            or receiver_id == user_id
+        )
+
+        if not is_current_user_involved:
+            continue
+
         if sender_id == user_id:
             participant_id = receiver_id
             participant_name = message.get("receiver_name") or "User"
 
             sender_role = message.get("sender_role") or "developer"
-            participant_role = "client" if sender_role == "developer" else "developer"
+            participant_role = "client" if sender_role in ["developer", "admin"] else "developer"
         else:
             participant_id = sender_id
             participant_name = message.get("sender_name") or "User"
@@ -166,6 +212,9 @@ def get_user_conversations(user_id: str):
         repo_name = message.get("repo_name") or "Repository"
         commit_id = normalize_text(message.get("commit_id"))
 
+        # Important:
+        # participant_id + repo_id + commit_id se conversation isolated rahegi.
+        # Is se admin-client chat har developer ko show nahi hogi.
         conversation_key = f"{participant_id}__{repo_id}__{commit_id or 'repo'}"
 
         if conversation_key in conversations:
@@ -173,32 +222,52 @@ def get_user_conversations(user_id: str):
 
         if commit_id:
             unread_query = {
-                "sender_id": participant_id,
-                "receiver_id": user_id,
-                "repo_id": repo_id,
-                "commit_id": commit_id,
-                "is_read": False,
+                "$and": [
+                    {
+                        "$or": [
+                            {"participants": user_id},
+                            {"receiver_id": user_id},
+                        ]
+                    },
+                    {"sender_id": participant_id},
+                    {"receiver_id": user_id},
+                    {"repo_id": repo_id},
+                    {"commit_id": commit_id},
+                    {"is_read": False},
+                ]
             }
 
             title = "Commit Review Discussion"
             conversation_type = "commit-review"
         else:
             unread_query = {
-                "sender_id": participant_id,
-                "receiver_id": user_id,
-                "repo_id": repo_id,
-                "is_read": False,
-                "$or": [
-                    {"commit_id": ""},
-                    {"commit_id": None},
-                    {"commit_id": {"$exists": False}},
-                ],
+                "$and": [
+                    {
+                        "$or": [
+                            {"participants": user_id},
+                            {"receiver_id": user_id},
+                        ]
+                    },
+                    {"sender_id": participant_id},
+                    {"receiver_id": user_id},
+                    {"repo_id": repo_id},
+                    {"is_read": False},
+                    {
+                        "$or": [
+                            {"commit_id": ""},
+                            {"commit_id": None},
+                            {"commit_id": {"$exists": False}},
+                        ]
+                    },
+                ]
             }
 
             title = "Repository Discussion"
             conversation_type = "repo-support"
 
         unread_count = chat_collection.count_documents(unread_query)
+
+        conversation_participants = normalize_participants(user_id, participant_id)
 
         conversations[conversation_key] = {
             "id": conversation_key,
@@ -216,6 +285,7 @@ def get_user_conversations(user_id: str):
             "status": "online",
             "priority": "medium",
             "review_status": "Pending Review",
+            "participants": conversation_participants,
         }
 
     return [serialize_conversation(item) for item in conversations.values()]
