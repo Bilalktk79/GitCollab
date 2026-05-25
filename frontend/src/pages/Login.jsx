@@ -7,6 +7,24 @@ import "../styles/pages.css";
 import { githubTokenLogin } from "../services/auth";
 import { useAuth } from "../context/AuthContext";
 
+const STALE_AUTH_KEYS = [
+  "developerId",
+  "developerName",
+  "clientId",
+  "clientName",
+  "userId",
+  "userRole",
+  "role",
+  "client_name",
+  "project_code",
+];
+
+const clearStaleIdentityKeys = () => {
+  STALE_AUTH_KEYS.forEach((key) => {
+    localStorage.removeItem(key);
+  });
+};
+
 const Login = () => {
   const [token, setToken] = useState("");
   const [loading, setLoading] = useState(false);
@@ -15,7 +33,7 @@ const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { login } = useAuth();
+  const { login, logout } = useAuth();
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -28,13 +46,17 @@ const Login = () => {
 
   // OAuth GitHub Login
   const loginWithGithub = () => {
-  setErrorMessage("");
+    setErrorMessage("");
 
-  const API_BASE_URL =
-    import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000";
+    // Clear old client/developer identity before new GitHub OAuth login
+    clearStaleIdentityKeys();
 
-  window.location.href = `${API_BASE_URL}/api/auth/github/login`;
-};
+    const API_BASE_URL =
+      import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000";
+
+    window.location.href = `${API_BASE_URL}/api/auth/github/login`;
+  };
+
   // Token Login
   const loginWithToken = async (e) => {
     e.preventDefault();
@@ -48,7 +70,11 @@ const Login = () => {
       setLoading(true);
       setErrorMessage("");
 
-      const data = await githubTokenLogin(token);
+      // Clear previous stale session before new token login
+      logout();
+      clearStaleIdentityKeys();
+
+      const data = await githubTokenLogin(token.trim());
 
       login(
         data.token,
@@ -56,8 +82,6 @@ const Login = () => {
         data.username,
         data.role || "developer"
       );
-
-      alert("GitHub Login Successful");
 
       navigate("/dashboard");
     } catch (error) {
@@ -82,9 +106,7 @@ const Login = () => {
 
       <div className="auth-card">
         {errorMessage && (
-          <div className="admin-error-message">
-            {errorMessage}
-          </div>
+          <div className="admin-error-message">{errorMessage}</div>
         )}
 
         {/* GitHub OAuth Login */}
@@ -113,6 +135,7 @@ const Login = () => {
             placeholder="Enter GitHub Personal Access Token"
             value={token}
             onChange={(e) => setToken(e.target.value)}
+            disabled={loading}
           />
 
           <button

@@ -11,18 +11,15 @@ import {
 
 import { createClientAccess } from "../services/clientService";
 import { sendChatMessage } from "../services/chatService";
+import { useAuth } from "../context/AuthContext";
 import "../styles/clientAccess.css";
 
 const ClientInvite = () => {
-  const developerId =
-    localStorage.getItem("userId") ||
-    localStorage.getItem("developerId") ||
-    "101";
+  const { token, currentUser, userId, username, userRole } = useAuth();
 
-  const developerName =
-    localStorage.getItem("username") ||
-    localStorage.getItem("developerName") ||
-    "Developer";
+  const developerId = userId || currentUser?.id || "";
+  const developerName = username || currentUser?.username || "Developer";
+  const developerRole = userRole || currentUser?.role || "developer";
 
   const [formData, setFormData] = useState({
     clientName: "",
@@ -75,14 +72,33 @@ const ClientInvite = () => {
     const repoName = formData.repoName.trim();
     const projectCode = formData.projectCode.trim().toUpperCase();
 
+    if (!token) {
+      setError("Please login as developer/admin before creating client invite.");
+      return;
+    }
+
+    if (!developerId || !developerName) {
+      setError("Logged-in developer identity not found. Please logout and login again.");
+      return;
+    }
+
+    if (developerRole !== "developer" && developerRole !== "admin") {
+      setError("Only developer/admin users can create client invites.");
+      return;
+    }
+
     if (!clientName || !repoName || !projectCode) {
       setError("Please enter client name, repository name, and project code.");
       return;
     }
 
     const payload = {
+      // Temporary compatibility for current backend.
+      // Backend should later ignore these and use JWT/current user.
       developer_id: String(developerId),
       developer_name: developerName,
+      developer_role: developerRole,
+
       client_name: clientName,
       repo_id: repoId,
       repo_name: repoName,
@@ -110,6 +126,7 @@ const ClientInvite = () => {
         repo_name: accessData.repo_name || repoName,
         developer_id: accessData.developer_id || String(developerId),
         developer_name: accessData.developer_name || developerName,
+        developer_role: accessData.developer_role || developerRole,
       };
 
       setCreatedAccess(finalAccessData);
@@ -117,7 +134,7 @@ const ClientInvite = () => {
       await sendChatMessage({
         sender_id: String(finalAccessData.developer_id),
         sender_name: finalAccessData.developer_name,
-        sender_role: "developer",
+        sender_role: finalAccessData.developer_role || "developer",
         receiver_id: finalAccessData.client_id,
         receiver_name: finalAccessData.client_name,
         repo_id: finalAccessData.repo_id,
@@ -128,6 +145,8 @@ const ClientInvite = () => {
 
       setStarterChatCreated(true);
     } catch (error) {
+      console.error("Create client invite error:", error);
+
       setError(
         error?.response?.data?.detail ||
           error.message ||
@@ -200,6 +219,12 @@ const ClientInvite = () => {
         <div className="client-access-right">
           <form className="client-form" onSubmit={handleCreateInvite}>
             <h2>Create Client Invite</h2>
+
+            <div className="client-note" style={{ textAlign: "left" }}>
+              Logged in as: <strong>{developerName}</strong>
+              <br />
+              Role: <strong>{developerRole}</strong>
+            </div>
 
             <div className="client-form-group">
               <label>Client Name *</label>
@@ -287,6 +312,8 @@ const ClientInvite = () => {
                 Client: {createdAccess.client_name}
                 <br />
                 Developer: {createdAccess.developer_name}
+                <br />
+                Role: {createdAccess.developer_role || developerRole}
                 <br />
                 Project: {createdAccess.repo_name}
                 <br />

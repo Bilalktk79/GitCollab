@@ -10,23 +10,32 @@ const api = axios.create({
   },
 });
 
+const isValidJwtToken = (token) => {
+  return (
+    token &&
+    typeof token === "string" &&
+    token.split(".").length === 3
+  );
+};
+
 api.interceptors.request.use(
   (config) => {
     /*
       Token strategy:
 
-      1. Admin/app protected backend routes:
-         Use app token from localStorage "token"
+      1. App protected backend routes:
+         Use app JWT token from localStorage "token"
 
-      2. GitHub related backend routes:
-         Use github_token when route is /api/github/...
+      2. GitHub backend proxy routes:
+         Use github_token when route starts with /api/github
 
-      3. Client routes:
-         Use client/app token from "token"
+      3. Public client access:
+         /api/client/access should not require JWT
 
       Important:
-      Admin routes must NOT receive GitHub token.
-      They need app JWT token because backend decodes role/user_id from it.
+      - Admin/developer routes must receive app JWT, not GitHub token.
+      - Never send fake client_ token as Bearer JWT.
+      - Respect manually supplied Authorization headers.
     */
 
     const appToken = localStorage.getItem("token");
@@ -35,14 +44,25 @@ api.interceptors.request.use(
 
     const url = config.url || "";
     const isGitHubApiRoute = url.startsWith("/api/github");
+    const isPublicClientAccessRoute = url === "/api/client/access";
+
+    if (config.headers?.Authorization) {
+      return config;
+    }
+
+    if (isPublicClientAccessRoute) {
+      return config;
+    }
 
     if (isGitHubApiRoute && githubToken) {
       config.headers.Authorization = `Bearer ${githubToken}`;
-    } else if (appToken) {
+    } else if (isValidJwtToken(appToken)) {
       config.headers.Authorization = `Bearer ${appToken}`;
     }
 
-    config.headers["X-User-Role"] = userRole || "";
+    if (userRole) {
+      config.headers["X-User-Role"] = userRole;
+    }
 
     return config;
   },

@@ -1,4 +1,5 @@
 from fastapi import HTTPException
+
 from app.models.client_model import ClientAccessCreate, ClientAccessLogin
 from app.services.client_service import (
     create_client_access,
@@ -10,12 +11,17 @@ from app.services.client_service import (
 )
 
 
-def create_client_access_controller(data: ClientAccessCreate):
-    if not data.developer_id.strip():
-        raise HTTPException(status_code=400, detail="Developer ID is required")
+def create_client_access_controller(data: ClientAccessCreate, current_user: dict):
+    if not current_user:
+        raise HTTPException(status_code=401, detail="Authentication required")
 
-    if not data.developer_name.strip():
-        raise HTTPException(status_code=400, detail="Developer name is required")
+    current_role = current_user.get("role", "developer")
+
+    if current_role not in ["developer", "admin"]:
+        raise HTTPException(
+            status_code=403,
+            detail="Only developer/admin users can create client invites"
+        )
 
     if not data.repo_name.strip():
         raise HTTPException(status_code=400, detail="Repository name is required")
@@ -25,6 +31,12 @@ def create_client_access_controller(data: ClientAccessCreate):
 
     if not data.project_code.strip():
         raise HTTPException(status_code=400, detail="Project code is required")
+
+    # JWT is the single source of truth.
+    # Do not trust developer_id/developer_name coming from frontend.
+    data.developer_id = str(current_user.get("user_id"))
+    data.developer_name = current_user.get("username")
+    data.developer_role = current_role
 
     result = create_client_access(data)
 
@@ -46,11 +58,9 @@ def verify_client_access_controller(data: ClientAccessLogin):
     if not result.get("success"):
         message = result.get("message", "Client access failed.")
 
-        # Revoked/inactive access ke liye 403 Forbidden best hai
         if "revoked" in message.lower() or "inactive" in message.lower():
             raise HTTPException(status_code=403, detail=message)
 
-        # Invalid code ke liye 401 Unauthorized
         raise HTTPException(status_code=401, detail=message)
 
     return result
@@ -78,7 +88,7 @@ def deactivate_client_access_controller(access_id: str):
     return {
         "success": True,
         "message": "Client access deactivated successfully.",
-        "data": record
+        "data": record,
     }
 
 
@@ -91,5 +101,5 @@ def activate_client_access_controller(access_id: str):
     return {
         "success": True,
         "message": "Client access activated successfully.",
-        "data": record
+        "data": record,
     }

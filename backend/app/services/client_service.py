@@ -16,14 +16,20 @@ def serialize_client_access(item):
     return {
         "id": str(item["_id"]),
         "client_id": item.get("client_id"),
+
         "developer_id": item.get("developer_id"),
         "developer_name": item.get("developer_name"),
+        "developer_role": item.get("developer_role", "developer"),
+
         "repo_id": item.get("repo_id"),
         "repo_name": item.get("repo_name"),
+
         "client_name": item.get("client_name"),
         "client_email": item.get("client_email"),
+
         "project_code": item.get("project_code"),
         "is_active": item.get("is_active", True),
+
         "created_at": item.get("created_at"),
         "updated_at": item.get("updated_at"),
         "revoked_at": item.get("revoked_at"),
@@ -47,16 +53,45 @@ def create_client_access(data):
             "message": "Project code already exists. Please use another code."
         }
 
+    developer_id = str(data.developer_id or "").strip()
+    developer_name = str(data.developer_name or "").strip()
+    developer_role = str(data.developer_role or "developer").strip()
+
+    if not developer_id:
+        return {
+            "success": False,
+            "message": "Developer ID is missing from authenticated user."
+        }
+
+    if not developer_name:
+        return {
+            "success": False,
+            "message": "Developer name is missing from authenticated user."
+        }
+
+    if developer_role not in ["developer", "admin"]:
+        return {
+            "success": False,
+            "message": "Only developer/admin users can create client invites."
+        }
+
     client_access = {
         "client_id": client_id,
-        "developer_id": data.developer_id,
-        "developer_name": data.developer_name,
+
+        # Source of truth: controller fills these from JWT/current user.
+        "developer_id": developer_id,
+        "developer_name": developer_name,
+        "developer_role": developer_role,
+
         "repo_id": data.repo_id or "",
-        "repo_name": data.repo_name,
-        "client_name": data.client_name,
+        "repo_name": data.repo_name.strip(),
+
+        "client_name": data.client_name.strip(),
         "client_email": data.client_email or "",
+
         "project_code": project_code,
         "is_active": True,
+
         "created_at": datetime.utcnow(),
         "updated_at": datetime.utcnow(),
         "revoked_at": None,
@@ -129,13 +164,17 @@ def verify_client_access(data):
         "message": "Client access granted.",
         "token": client_token,
         "role": "client",
+
         "client_id": client_id,
         "client_name": client_name,
+
         "project_code": access_record.get("project_code"),
         "repo_id": access_record.get("repo_id"),
         "repo_name": access_record.get("repo_name"),
+
         "developer_id": access_record.get("developer_id"),
         "developer_name": access_record.get("developer_name"),
+        "developer_role": access_record.get("developer_role", "developer"),
     }
 
 
