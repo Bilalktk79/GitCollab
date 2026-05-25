@@ -224,6 +224,12 @@ def create_indexes():
         [("sender_id", ASCENDING), ("receiver_id", ASCENDING), ("created_at", ASCENDING)]
     )
 
+    # Important for participant-based chat filtering
+    safe_create_index(
+        chat_messages_collection,
+        [("participants", ASCENDING), ("created_at", DESCENDING)]
+    )
+
     safe_create_index(
         chat_messages_collection,
         [("commit_id", ASCENDING), ("created_at", ASCENDING)]
